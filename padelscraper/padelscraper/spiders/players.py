@@ -20,37 +20,33 @@ class PlayerSpider(scrapy.Spider):
 
         # Players from 1 to 10 in ranking
         players_1_10 = response.xpath('//div[@class="slider__item"]')
-
-        for player in players_1_10:
-            yield {
-                'ranking': player.xpath('.//span[@class="slider__number"]/text()').get().strip(),
-                'name': player.xpath('.//h2[@class="slider__name"]/a/@title').get(),
-                'url': player.xpath('.//h2[@class="slider__name"]/a/@href').get(),
-                'country': player.xpath('.//p[@class="slider__country"]/text()').get().strip(),
-                'points': player.xpath('.//span[@class="slider__pointTNumber"]/text()').get()
-            }
-
+        players_1_10_urls = players_1_10.xpath('.//h2[@class="slider__name"]/a/@href').getall()
+        
         # Players from 11 to 20 in ranking
         players_11_20 = response.css('.playerGrid__item')
+        players_11_20_url = players_11_20.css('.playerGrid__name a::attr(href)').getall() 
+
+        # Players from 21 to 40 in ranking
+        players_21_40 = response.css('.data-body-row')
+        players_21_40_url = players_21_40.css('td.data-body-cell.data-player-img-name .data-title-container a::attr(href)').getall()
+
+
+        players_url = players_1_10_urls + players_11_20_url + players_21_40_url
         
-        for player in players_11_20:
-            yield {
-                'ranking' : player.css('.playerGrid__number::text').get().strip(),
-                'name' : player.css('.playerGrid__name a::attr(title)').get(),
-                'url' : player.css('.playerGrid__name a::attr(href)').get(),
-                'country' : player.css('.playerGrid__country::text').get(),
-                'points' : player.css('.playerGrid__pointTNumber::text').get()
-            }
+        for player_url in players_url:
 
-         # Players from 21 to last in ranking
-        players_21_60 = response.css('.data-body-row')
+            yield response.follow(player_url, self.parse_player_url)
 
-        for player in players_21_60:
-            yield {
-                'ranking' : player.css('td.data-body-cell.data-rank-cell p::text').get().strip(),
-                'name' : player.css('td.data-body-cell.data-player-img-name .data-title-container a::text').get(),
-                'url' : player.css('td.data-body-cell.data-player-img-name .data-title-container a::attr(href)').get(),
-                'country' : player.css('td.data-body-cell.flag-country .country-name::text').get(),
-                'points' : player.css('td.data-body-cell.data-points p::text').get() 
-            }
 
+    def parse_player_url(self, response):
+
+        attributes = {}
+
+        attributes["ranking"] = response.xpath('//span[@class="slider__number player__number"]/text()').get().strip()
+        attributes["name"] = response.xpath('//h2[@class="slider__name player__name"]/text()').get()
+        attributes["country"] = response.xpath('//p[@class="slider__country player__country"]/text()').get()
+        attributes["points"] = response.xpath('//span[@class="slider__pointTNumber player__pointTNumber"]/text()').get()
+
+        yield {
+            **attributes
+        }
