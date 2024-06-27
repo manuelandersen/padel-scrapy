@@ -21,3 +21,6 @@ ipython_config.py
 
 # Scrapy stuff:
 .scrapy
+
+# json files
+*.json
