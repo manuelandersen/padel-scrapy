@@ -19,12 +19,6 @@ class PlayerSpider(scrapy.Spider):
     def parse(self, response):
 
         # Players from 1 to 10 in ranking
-#        ranks = response.xpath('//span[@class="slider__number"]/text()')
-#        for i in range(0,10):
-#            yield {
-#                'ranking' : ranks[i].get().strip()
-#            }
-
         players_1_10 = response.xpath('//div[@class="slider__item"]')
 
         for player in players_1_10:
