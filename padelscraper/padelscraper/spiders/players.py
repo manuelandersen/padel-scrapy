@@ -18,6 +18,19 @@ class PlayerSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        # Players from 1 to 10 in ranking
+        players_1_10 = response.xpath('//div[@class="slider__item"]')
+
+        for player in players_1_10:
+            yield {
+                'ranking': player.xpath('.//span[@class="slider__number"]/text()').get().strip(),
+                'name': player.xpath('.//h2[@class="slider__name"]/a/@title').get(),
+                'url': player.xpath('.//h2[@class="slider__name"]/a/@href').get(),
+                'country': player.xpath('.//p[@class="slider__country"]/text()').get().strip(),
+                'points': player.xpath('.//span[@class="slider__pointTNumber"]/text()').get()
+            }
+
+        # Players from 11 to 20 in ranking
         players_11_20 = response.css('.playerGrid__item')
         
         for player in players_11_20:
@@ -29,11 +42,8 @@ class PlayerSpider(scrapy.Spider):
                 'points' : player.css('.playerGrid__pointTNumber::text').get()
             }
 
+         # Players from 21 to last in ranking
         players_21_60 = response.css('.data-body-row')
-
-        print("****************")
-        print(len(players_21_60))
-        print("****************")
 
         for player in players_21_60:
             yield {
