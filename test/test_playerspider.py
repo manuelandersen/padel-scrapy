@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def player_data():
-    with open("player.json", "r", encoding="utf-8") as file:
+    with open("players.json", "r", encoding="utf-8") as file:
         data = json.load(file)
     return data
 
