@@ -24,3 +24,6 @@ ipython_config.py
 
 # json files
 *.json
+
+# pytest
+.pytest_cache/
