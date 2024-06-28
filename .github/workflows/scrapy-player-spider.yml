@@ -18,15 +18,13 @@ jobs:
     - name: Install Scrapy
       run: |
         python -m pip install --upgrade pip
-        pip install scrapy
+        pip install scrapy pytest
 
     - name: Run Scrapy Spider
       run: |
         cd padelscraper
         scrapy crawl playerspider -O players.json
 
-    - name: Upload JSON file
-      uses: actions/upload-artifact@v3
-      with:
-        name: players-json
-        path: padelscraper/players.json
+    - name: Run tests
+      run: |
+        pytest test
