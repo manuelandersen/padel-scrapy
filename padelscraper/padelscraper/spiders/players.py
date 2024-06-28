@@ -60,32 +60,32 @@ class PlayerSpider(scrapy.Spider):
 
         matches_played = response.xpath('//div[@class="matchPlayer__played"]/span/text()').get()
         if matches_played == "--":
-            matches_played = None
+            attributes["matches_played"] = None
         else:
             attributes["matches_played"] = matches_played
 
 
         matches_won = response.xpath('//div[@class="matchPlayer__won"]/span/text()').get()
         if matches_won == "--":
-            matches_won = None
+            attributes["matches_won"] = None
         else:
             attributes["matches_won"] = matches_won
 
         matches_lost = response.xpath('//div[@class="lost"]/span/text()').get()
         if matches_lost == "--":
-            matches_lost = None
+            attributes["matches_lost"] = None
         else:
             attributes["matches_lost"] = matches_lost
 
         consecutive_victories = response.xpath('//div[@class="matchPlayer__victories"]/span/text()').get()
         if consecutive_victories == "--":
-            consecutive_victories = None
+            attributes["consecutive_victories"] = None
         else:
             attributes["consecutive_victories"] = consecutive_victories
 
         effectiveness = response.xpath('//div[@class="matchPlayer__effective"]/span/text()').get()
         if effectiveness == "--":
-            effectiveness = None
+            attributes["effectiveness"] = None
         else:
             attributes["effectiveness"] = effectiveness
         
@@ -94,7 +94,7 @@ class PlayerSpider(scrapy.Spider):
         number_down = response.xpath('//span[contains(@class, "oldPosition down")]/text()').get()
         if number_down:
             old_position = f"-{number_down}"
-        # Check for oldPosition up if position is not set
+        # Check for oldPosition up if old_position is not set
         elif old_position is None:
             number_up = response.xpath('//span[contains(@class, "oldPosition up")]/text()').get()
             if number_up:
@@ -102,6 +102,34 @@ class PlayerSpider(scrapy.Spider):
 
         attributes["old_position"] = old_position
 
+        # Tournament points
+        attributes["points_per_tournament"] = list(self.parse_tournaments_points(response))
+
         yield {
             **attributes
         }
+
+
+    def parse_tournaments_points(self, response):
+        
+        for row in response.css('#data-tournament-table tbody tr'):
+            yield self.parse_tournament_points(row)
+        
+
+    def parse_tournament_points(self, row):
+        
+        tournament = {}
+
+        tournament["tournament_name"] = row.css('.tb-name::text').get()
+        tournament["category"] = row.css('.tb-type::text').get()
+        tournament["date"] = row.css('.tb-date::text').get()
+
+        round_reached = row.css('.tb-roundName::text').get()
+        if round_reached == "-":
+            tournament["round_reached"] = None
+        else:
+            tournament["round_reached"] = round_reached
+        
+        tournament["points"] = row.css('.tb-points::text').get()
+
+        return tournament
