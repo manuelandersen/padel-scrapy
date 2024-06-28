@@ -21,7 +21,9 @@ jobs:
         pip install scrapy
 
     - name: Run Scrapy Spider
-      run: scrapy crawl playerspider -O players.json
+      run: |
+        cd padelscraper
+        scrapy crawl playerspider -O players.json
 
     - name: Upload JSON file
       uses: actions/upload-artifact@v3
