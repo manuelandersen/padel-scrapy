@@ -13,5 +13,11 @@ def test_ranking_is_number(player_data):
         assert ranking is not None, "Ranking should not be None"
         assert ranking.isdigit(), f"Ranking {ranking} should be a number"
 
+def test_points_is_number(player_data):
+    for player in player_data:
+        ranking = player.get("points")
+        assert ranking is not None, "Points should not be None"
+        assert ranking.isdigit(), f"Points {ranking} should be a number"
+
 if __name__ == "__main__":
     pytest.main()
