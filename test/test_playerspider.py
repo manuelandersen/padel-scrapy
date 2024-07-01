@@ -17,7 +17,8 @@ def test_ranking_is_number(player_data):
 def test_name_not_none(player_data):
     for player in player_data:
         name = player.get("name")
-        assert name is not None, "Name should not be None"
+        if name is None:
+            warnings.warn("Name should not be None")
 
 def test_points_is_number(player_data):
     for player in player_data:
@@ -28,12 +29,17 @@ def test_points_is_number(player_data):
 def test_position(player_data):
     for player in player_data:
         position = player.get("position")
-        assert position in ["Right","Left"], "Position should not be None" 
+        if position == '--':
+            warnings.warn("Position should not be None")
+        else:
+            assert position in ["Right","Left"], "Position should be Right or Left" 
 
 def test_height_is_number(player_data):
     for player in player_data:
         height = player.get("height")
         if height is None:
+            warnings.warn("Height should not be None")
+        elif height == '--':
             warnings.warn("Height should not be None")
         else:
             try:

@@ -1,5 +1,5 @@
 import scrapy
-
+import json
 
 class PlayerSpider(scrapy.Spider):
     name = "playerspider"
@@ -12,7 +12,7 @@ class PlayerSpider(scrapy.Spider):
 
     1. section_sliderHomeWrap : this looks like is only for the first 10 players.
     2. section_playerGridWrap : this for the player 11 to 20.
-    3. player-table : and this one for 21 to 60, and then you can load more players.
+    3. player-table : and this one for 21 to 40, and then you can load more players.
 
     """
 
@@ -30,13 +30,71 @@ class PlayerSpider(scrapy.Spider):
         players_21_40 = response.css('.data-body-row')
         players_21_40_url = players_21_40.css('td.data-body-cell.data-player-img-name .data-title-container a::attr(href)').getall()
 
-
         players_url = players_1_10_urls + players_11_20_url + players_21_40_url
         
         for player_url in players_url:
 
             yield response.follow(player_url, self.parse_player_url)
-            
+        
+        # Players from 41 to last in ranking
+        # Find initial "load more" button parameters
+        load_more_button = response.css('.loadMoreRanking')
+        if load_more_button:
+            total_posts = int(load_more_button.attrib['data-total-post'])
+            posts_per_page = int(load_more_button.attrib['data-posts-per-page'])
+            offset = int(load_more_button.attrib['data-offset'])
+            gender = load_more_button.attrib['data-gender']
+            category = load_more_button.attrib['data-category']
+
+            # Prepare initial request parameters
+            params = {
+                'action': 'post_type_infinite',
+                'paged': '1',
+                'post_type': 'player',
+                'posts_per_page': str(posts_per_page),
+                'meta_key': 'ranking',
+                'taxonomy': 'country',
+                'offset': str(offset),
+                'total_post': str(total_posts),
+                'term': 'gender,player_category',
+                'termValue': f'{gender},{category}'
+            }
+
+            # Send request to load more data
+            yield scrapy.FormRequest(
+                url='https://www.padelfip.com/wp-admin/admin-ajax.php',
+                formdata=params,
+                callback=self.parse_more,
+                meta={'params': params, 'total_posts': total_posts}
+            )
+    
+    def parse_more(self, response):
+        data = json.loads(response.text)
+        # Check if the 'html' key exists and has content
+        if 'html' in data and data['html']:
+            # Parse the HTML string within the JSON response
+            row_selector = scrapy.Selector(text=data['html'])
+            player_rows = row_selector.css('.data-body-row')
+            for row in player_rows:
+                player_url = row.css('td.data-body-cell.data-player-img-name .data-title-container a::attr(href)').get()
+                if player_url:
+                    yield response.follow(player_url, self.parse_player_url)
+
+        # Check if there are more rows to load
+        params = response.meta['params']
+        total_posts = response.meta['total_posts']
+        offset = int(params['offset']) + int(params['posts_per_page'])
+        paged = int(params['paged']) + 1
+        if offset < total_posts:
+            params['offset'] = str(offset)
+            params['paged'] = str(paged)
+            yield scrapy.FormRequest(
+                url='https://www.padelfip.com/wp-admin/admin-ajax.php',
+                formdata=params,
+                callback=self.parse_more,
+                meta={'params': params, 'total_posts': total_posts}
+            )
+
     def parse_player_url(self, response):
 
         attributes = {}
