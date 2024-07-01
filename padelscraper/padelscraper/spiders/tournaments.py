@@ -29,13 +29,13 @@ class TournamentSpider(scrapy.Spider):
             for event in events:
                 event_url = event.css('.event-title a::attr(href)').get()
                 yield response.follow(event_url, 
-                                      self.parse_event, meta={
+                                      self.parse_tournament, meta={
                                                             'year': year,
                                                             'month': month_name
                                                             }
                 )
 
-    def parse_event(self, response):
+    def parse_tournament(self, response):
         year = response.meta['year']
         month = response.meta['month']
         event_name = response.css('h1.event__name::text').get()
