@@ -36,8 +36,7 @@ class PlayerSpider(scrapy.Spider):
         for player_url in players_url:
 
             yield response.follow(player_url, self.parse_player_url)
-
-
+            
     def parse_player_url(self, response):
 
         attributes = {}
@@ -109,12 +108,10 @@ class PlayerSpider(scrapy.Spider):
             **attributes
         }
 
-
     def parse_tournaments_points(self, response):
         
         for row in response.css('#data-tournament-table tbody tr'):
             yield self.parse_tournament_points(row)
-        
 
     def parse_tournament_points(self, row):
         
