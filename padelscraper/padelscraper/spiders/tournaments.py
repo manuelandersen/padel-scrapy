@@ -1,4 +1,7 @@
+from typing import Any
 import scrapy
+from urllib.parse import urljoin
+import re
 
 
 class TournamentSpider(scrapy.Spider):
@@ -55,14 +58,40 @@ class TournamentSpider(scrapy.Spider):
         if club_info:
             club_info = club_info.strip()
 
-        yield {
-                "year": year, 
-                "month": month, 
-                "event_name": event_name,
-                "event_place": event_place,
-                "event_date": event_date,
-                "gender": gender,
-                'qualification_date': qualification_texts,
-                "prize_money": prize_money,
-                "club_info": club_info,
-            }
+        attributes = {
+            "year": year,
+            "month": month,
+            "event_name": event_name,
+            "event_place": event_place,
+            "event_date": event_date,
+            "gender": gender,
+            "qualification_date": qualification_texts,
+            "prize_money": prize_money,
+            "club_info": club_info
+        }
+
+        base_url = response.url
+        games_order_url = urljoin(base_url, "?tab=Orden+de+juego")
+        
+        # Make a request to the games order URL
+        yield response.follow(games_order_url, self.parse_games_orders, meta={'attributes': attributes})
+
+    def parse_games_orders(self, response):
+
+        attributes = response.meta['attributes']
+
+        widget = response.xpath('//iframe[@class="iframe-score"]/@data-src').get()
+
+        # Checking for the number of the days that the tournament lasted
+        if widget:
+            days_played = re.search(r'/(\d+)\?', widget)
+            days = int(days_played.group(1)) if days_played else None
+            attributes["days_played"] = days
+
+        else:
+            attributes["days_played"] = None
+
+        attributes["url"] = widget
+
+        yield attributes
+    
