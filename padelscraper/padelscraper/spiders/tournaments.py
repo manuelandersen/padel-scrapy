@@ -6,7 +6,7 @@ import re
 
 class TournamentSpider(scrapy.Spider):
     name = "tournamentspider"
-    allowed_domains = ["padelfip.com"]
+    #allowed_domains = ["padelfip.com"]
     start_urls = ["https://www.padelfip.com/es/calendario-premier-padel/"]
 
 
