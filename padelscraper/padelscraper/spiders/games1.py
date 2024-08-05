@@ -42,6 +42,8 @@ class GamesSpider(scrapy.Spider):
         loser_player_name_parts = loser_div.xpath('.//span/text()').getall()
         loser_player_name = ' '.join(part.strip() for part in loser_player_name_parts if part.strip())
 
+        #time = game.xpath('//div[span[1]="🕑" and span[3]="Completed"]/span[2]/text()')    
+
 
         if data_id and data_year and data_tid and data_org:
             ajax_url = response.urljoin("/screen/getmatchstats?t=tol")
@@ -62,10 +64,7 @@ class GamesSpider(scrapy.Spider):
                     'court': court,
                     'gender': gender,
                     'round': round,
-                    'data_id': data_id,
-                    'data_year': data_year,
-                    'data_tid': data_tid,
-                    'data_org': data_org,
+                    #'time': time,
                     'winner_player_name': winner_player_name,
                     'loser_player_name': loser_player_name
                 }
@@ -79,6 +78,7 @@ class GamesSpider(scrapy.Spider):
         percentages = response.css('p.text2.withPercentage .percentage::text').getall()
         pctgs_numbers = response.css('p.text2.withPercentage .text3::text').getall()  
         numbers = response.xpath('//div[@class="col-md-4 col-3"][1]//p[@class="text2"]/text()').getall()
+        time = response.xpath('//h5[@class="text-center text-uppercase m-3"]/span[2]/text()').get()
 
         total_stats = len(percentages) // 2 
 
@@ -170,6 +170,7 @@ class GamesSpider(scrapy.Spider):
             'court': response.meta['court'],
             'gender': response.meta['gender'],
             'round': response.meta['round'],
+            'time': time,
             'winner_player_name': response.meta['winner_player_name'],
             'loser_player_name': response.meta['loser_player_name'],
             #'total_points_won_percentages': percentages,
