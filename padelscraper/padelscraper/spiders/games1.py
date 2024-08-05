@@ -78,8 +78,8 @@ class GamesSpider(scrapy.Spider):
         # TODO: fix numbers. This number are the numbers version of the percentages, is not scraping the pure numbers.
         percentages = response.css('p.text2.withPercentage .percentage::text').getall()
         pctgs_numbers = response.css('p.text2.withPercentage .text3::text').getall()  
-        numbers = response.css('.text2::text').get()
-        
+        numbers = response.xpath('//div[@class="col-md-4 col-3"][1]//p[@class="text2"]/text()').getall()
+
         total_stats = len(percentages) // 2 
 
         list_of_pctg_stats = ["total_points_won", 
@@ -91,17 +91,18 @@ class GamesSpider(scrapy.Spider):
                          "total_serve_points_won",
                          "total_return_points_won"]
         
-        list_of_number_stats = ["total_points_won",
-                                "break_points_converted", 
+        list_of_number_stats = [
+                            #   "total_points_won",
+                            #    "break_points_converted", 
                                 "longest_points_won_streak",
                                 "average_point_duration_in_seconds",
                                 "aces",
                                 "double_faults",
-                                "first_serve_point_won",
-                                "second_serve_point_won",
+                            #    "first_serve_point_won",
+                            #    "second_serve_point_won",
                                 "services_games_played",
-                                "first_return_points_won",
-                                "second_return_points",
+                            #    "first_return_points_won",
+                            #    "second_return_points",
                                 "return_games_played",
                                 "total_serve_points_won",
                                 "total_return_points_won"]
@@ -134,6 +135,9 @@ class GamesSpider(scrapy.Spider):
 
                 if stat == 'total_return_points_won': # for switching to the next set of stats
                     pctg_stat_counter += 1
+
+            # TODO: big BUG here: the numbers stats are being scraped like this: first all the stats from one couple, going from match
+            # stats, 1 set stats, etc., and then switching to collect the second couple stats
 
             for i, stat in enumerate(2*list_of_number_stats): # 2 sets of stats
                 if i*2+1 < len(numbers):  # Make sure we don't go out of bounds
