@@ -25,5 +25,10 @@ jobs:
     #     cd padelscraper
     #     scrapy crawl playerspider -O players.json
 
+    - name: Install scrapy and pytest
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+
     - name: Run tests
       run: pytest test
