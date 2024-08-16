@@ -77,7 +77,8 @@ class GamesSpider(scrapy.Spider):
         # TODO: fix numbers. This number are the numbers version of the percentages, is not scraping the pure numbers.
         percentages = response.css('p.text2.withPercentage .percentage::text').getall()
         pctgs_numbers = response.css('p.text2.withPercentage .text3::text').getall()  
-        numbers = response.xpath('//div[@class="col-md-4 col-3"][1]//p[@class="text2"]/text()').getall()
+        numbers_left = response.xpath('//div[@class="col-md-4 col-3"][1]//p[@class="text2"]/text()').getall()
+        numbers_right = response.xpath('//div[@class="col-md-4 col-3 text-right"][1]//p[@class="text2"]/text()').getall()
         time = response.xpath('//h5[@class="text-center text-uppercase m-3"]/span[2]/text()').get()
 
         total_stats = len(percentages) // 2 
@@ -97,11 +98,7 @@ class GamesSpider(scrapy.Spider):
                                 "aces",
                                 "double_faults",
                                 "services_games_played",
-                                "return_games_played"]
-        
-        print("###########################################")
-        print(f"{total_stats}")
-        print("###########################################")
+                                "return_games_played"]  
 
         if total_stats < 16:
             raise Exception
@@ -112,19 +109,46 @@ class GamesSpider(scrapy.Spider):
             for i, stat in enumerate(2*list_of_pctg_stats): # 2 sets of stats
                 if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
                     winner_stat = percentages[i*2]
+                    winner_n_stat = pctgs_numbers[i*2]
+
                     looser_stat = percentages[i*2+1]
+                    looser_n_stat = pctgs_numbers[i*2+1]
 
                     if pctg_stat_counter == 0:
 
-                        stats_attributes[f'right_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 1:
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
 
                 if stat == 'total_return_points_won': # for switching to the next set of stats
                     pctg_stat_counter += 1
+
+            number_stat_counter = 0
+
+            for i, stat in enumerate(2*list_of_number_stats):
+                if i < len(numbers_left): 
+                    left_number_stat = numbers_left[i]
+                    right_number_stat = numbers_right[i]
+
+                    if number_stat_counter == 0:
+                        stats_attributes[f'left_match_{stat}'] = left_number_stat
+                        stats_attributes[f'right_match_{stat}'] = right_number_stat
+
+                    if number_stat_counter == 1:
+                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
+                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
+
+                    if stat == 'return_games_played':
+                        number_stat_counter += 1
 
         elif total_stats == 24: # match stats, 1st set stats and 2nd stats
 
@@ -133,23 +157,53 @@ class GamesSpider(scrapy.Spider):
             for i, stat in enumerate(3*list_of_pctg_stats): # 3 sets of stats
                 if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
                     winner_stat = percentages[i*2]
+                    winner_n_stat = pctgs_numbers[i*2]
+
                     looser_stat = percentages[i*2+1]
+                    looser_n_stat = pctgs_numbers[i*2+1]
 
                     if pctg_stat_counter == 0:
 
-                        stats_attributes[f'right_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 1:
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 2:
-                        stats_attributes[f'right_2_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_2_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_2_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_2_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_2_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_2_set_pctg_numbers_{stat}'] = looser_n_stat
 
                 if stat == 'total_return_points_won': # for switching to the next set of stats
                     pctg_stat_counter += 1
+
+            number_stat_counter = 0
+
+            for i, stat in enumerate(3*list_of_number_stats):
+                if i < len(numbers_left): 
+                    left_number_stat = numbers_left[i]
+                    right_number_stat = numbers_right[i]
+
+                    if number_stat_counter == 0:
+                        stats_attributes[f'left_match_{stat}'] = left_number_stat
+                        stats_attributes[f'right_match_{stat}'] = right_number_stat
+
+                    if number_stat_counter in [1,2]:
+                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
+                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
+
+                    if stat == 'return_games_played':
+                        number_stat_counter += 1
         
         elif total_stats == 32: # match stats, 1st set stats, 2nd set stats and 3rd set stats
 
@@ -158,27 +212,60 @@ class GamesSpider(scrapy.Spider):
             for i, stat in enumerate(4*list_of_pctg_stats): # 4 sets of stats
                 if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
                     winner_stat = percentages[i*2]
+                    winner_n_stat = pctgs_numbers[i*2]
+
                     looser_stat = percentages[i*2+1]
+                    looser_n_stat = pctgs_numbers[i*2+1]
 
                     if pctg_stat_counter == 0:
 
-                        stats_attributes[f'right_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 1:
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 2:
-                        stats_attributes[f'right_2_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_2_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_2_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_2_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_2_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_2_set_pctg_numbers_{stat}'] = looser_n_stat
 
                     elif pctg_stat_counter == 3:
-                        stats_attributes[f'right_3_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_3_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'left_3_set_pctg_{stat}'] = winner_stat
+                        stats_attributes[f'left_3_set_pctg_numbers_{stat}'] = winner_n_stat
+
+                        stats_attributes[f'right_3_set_pctg_{stat}'] = looser_stat
+                        stats_attributes[f'right_3_set_pctg_numbers_{stat}'] = looser_n_stat
 
                 if stat == 'total_return_points_won': # for switching to the next set of stats
                     pctg_stat_counter += 1
+
+            number_stat_counter = 0
+
+            for i, stat in enumerate(4*list_of_number_stats):
+                if i < len(numbers_left): 
+                    left_number_stat = numbers_left[i]
+                    right_number_stat = numbers_right[i]
+
+                    if number_stat_counter == 0:
+                        stats_attributes[f'left_match_{stat}'] = left_number_stat
+                        stats_attributes[f'right_match_{stat}'] = right_number_stat
+
+                    if number_stat_counter in [1,2,3]:
+                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
+                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
+
+                    if stat == 'return_games_played':
+                        number_stat_counter += 1
 
         yield {
             'date': response.meta['date'],
@@ -188,7 +275,5 @@ class GamesSpider(scrapy.Spider):
             'time': time,
             'winner_player_name': response.meta['winner_player_name'],
             'loser_player_name': response.meta['loser_player_name'],
-            #'total_points_won_percentages': percentages,
-            #'total_points_won_numbers': numbers,
             **stats_attributes
         }
