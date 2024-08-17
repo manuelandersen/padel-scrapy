@@ -36,9 +36,13 @@ class GamesSpider(scrapy.Spider):
             yield from self.parse_game(response, game, date)
 
     def parse_game(self, response, game, date):
-        court = game.xpath('.//span[@class="court-name"]/text()').get()
-        gender = game.xpath(".//div[@class='round-name text-right']/small/b/text()").get().strip()
-        round = game.xpath(".//div[@class='round-name text-right']/small/text()").get().strip()
+        # court = game.xpath('.//span[@class="court-name"]/text()').get()
+        # gender = game.xpath(".//div[@class='round-name text-right']/small/b/text()").get().strip()
+        # round = game.xpath(".//div[@class='round-name text-right']/small/text()").get().strip()
+
+        court = game.xpath('.//span[@class="court-name"]/text()').get() or ''
+        gender = (game.xpath(".//div[@class='round-name text-right']/small/b/text()").get() or '').strip()
+        round = (game.xpath(".//div[@class='round-name text-right']/small/text()").get() or '').strip()
 
         button = game.css('a.open')
         data_id = button.xpath('@data-id').get()
