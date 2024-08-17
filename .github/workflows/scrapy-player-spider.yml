@@ -1,12 +1,6 @@
 name: Scrapy Spider Workflow
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   run-scrapy-spider:
