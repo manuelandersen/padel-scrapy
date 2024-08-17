@@ -1,8 +1,8 @@
-# padel-scrapy
+## padel-scrapy
 
-This is a project to scrap data the [International Padel Federation](https://www.padelfip.com/es/) page. It collects players, tourneys and games information into JSON files.
+This is a project to scrap data from the [International Padel Federation](https://www.padelfip.com/es/) page. It collects players, tourneys and games information into JSON files.
 
-# Installation
+## Installation
 
 1)  Clone the repository
 
@@ -24,7 +24,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-# Running the spiders
+## Running the spiders
 
 ``` bash
 # you need to be inside the padelscraper directory
@@ -43,3 +43,5 @@ scrapy crawl gamespider -a start_url -a days_played
 # if you want to store the json file 
 scrapy crawl playerspider -O path_to_file.json
 ```
+
+## Contribute
