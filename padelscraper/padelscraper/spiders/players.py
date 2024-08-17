@@ -100,6 +100,10 @@ class PlayerSpider(scrapy.Spider):
         attributes = {}
 
         attributes["ranking"] = response.xpath('//span[@class="slider__number player__number"]/text()').get().strip()
+
+        # ranking = response.xpath('//span[@class="slider__number player__number"]/text()').get()
+        # attributes["ranking"] = ranking.strip() if ranking else "N/A"
+
         attributes["name"] = response.xpath('//h2[@class="slider__name player__name"]/text()').get()
         attributes["country"] = response.xpath('//p[@class="slider__country player__country"]/text()').get()
         attributes["points"] = response.xpath('//span[@class="slider__pointTNumber player__pointTNumber"]/text()').get()
