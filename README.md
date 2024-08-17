@@ -24,7 +24,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4)  Run spiders:
+# Running the spiders
 
 ``` bash
 # you need to be inside the padelscraper directory
@@ -43,5 +43,3 @@ scrapy crawl gamespider -a start_url -a days_played
 # if you want to store the json file 
 scrapy crawl playerspider -O path_to_file.json
 ```
-
-# Running the spiders
