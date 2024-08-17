@@ -20,10 +20,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install scrapy pytest
 
-    - name: Run Scrapy Spider
-      run: |
-        cd padelscraper
-        scrapy crawl playerspider -O players.json
-
     - name: Run tests
       run: pytest test

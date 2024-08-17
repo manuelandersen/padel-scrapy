@@ -10,9 +10,9 @@ class GamesSpider(scrapy.Spider):
             raise ValueError("A start_url must be provided to run this spider.")
         if days_played is None:
             raise ValueError("days_played must be provided to run this spider.")
-        self.start_url = start_url  # Store the start_url as a string
-        self.days_played = int(days_played)  # Convert days_played to an integer
-        self.start_urls = [start_url]  # Assign start_urls as a list containing start_url
+        self.start_url = start_url 
+        self.days_played = int(days_played)  
+        self.start_urls = [start_url] 
 
     def parse(self, response):
 
@@ -27,12 +27,6 @@ class GamesSpider(scrapy.Spider):
         urls = [re.sub(pattern, str(num), url) for num in number_range]
 
         for url in urls:
-            print("###############################")
-            print(url)
-            print("###############################")
-
-        
-        for url in urls:
             yield response.follow(url, self.parse_games)
 
     def parse_games(self, response):
@@ -42,9 +36,13 @@ class GamesSpider(scrapy.Spider):
             yield from self.parse_game(response, game, date)
 
     def parse_game(self, response, game, date):
-        court = game.xpath('.//span[@class="court-name"]/text()').get()
-        gender = game.xpath(".//div[@class='round-name text-right']/small/b/text()").get().strip()
-        round = game.xpath(".//div[@class='round-name text-right']/small/text()").get().strip()
+        # court = game.xpath('.//span[@class="court-name"]/text()').get()
+        # gender = game.xpath(".//div[@class='round-name text-right']/small/b/text()").get().strip()
+        # round = game.xpath(".//div[@class='round-name text-right']/small/text()").get().strip()
+
+        court = game.xpath('.//span[@class="court-name"]/text()').get() or ''
+        gender = (game.xpath(".//div[@class='round-name text-right']/small/b/text()").get() or '').strip()
+        round = (game.xpath(".//div[@class='round-name text-right']/small/text()").get() or '').strip()
 
         button = game.css('a.open')
         data_id = button.xpath('@data-id').get()
