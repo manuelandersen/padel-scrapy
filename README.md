@@ -44,6 +44,10 @@ scrapy crawl gamespider -a start_url="the_star_url" -a days_played=days_played
 scrapy crawl playerspider -O path_to_file.json
 ```
 
+## Examples
+
+Examples of the way the data look for each spider can be found in the `examples` folder.
+
 ## Contributions
 
 We welcome contributions to improve and expand this project! Whether you're fixing a bug, adding a new feature, or improving documentation, your help is appreciated.
