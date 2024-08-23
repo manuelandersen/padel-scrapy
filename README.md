@@ -8,7 +8,7 @@ This is a project to scrap data from the [International Padel Federation](https:
 
 ``` bash
 git clone https://github.com/manuelandersen/padel-scrapy.git
-cd your-repository
+cd padel-scrapy
 ```
 
 2)  Create a virtual environment (optional but recommended):
@@ -38,10 +38,12 @@ scrapy crawl tournamentspider
 
 # to run games spider you need to give it a url and the numbers of days played
 # this info can be obtained from the tournamentspider results
-scrapy crawl gamespider -a start_url -a days_played
+scrapy crawl gamespider -a start_url="the_star_url" -a days_played=days_played
 
 # if you want to store the json file 
 scrapy crawl playerspider -O path_to_file.json
 ```
 
-## Contribute
+## Contributions
+
+We welcome contributions to improve and expand this project! Whether you're fixing a bug, adding a new feature, or improving documentation, your help is appreciated.
