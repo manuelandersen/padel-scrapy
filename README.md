@@ -26,7 +26,7 @@ pip install -r requirements.txt
 
 ## Running the spiders
 
-``` bash
+``` console
 # you need to be inside the padelscraper directory
 cd padelscraper
 
@@ -43,6 +43,14 @@ scrapy crawl gamespider -a start_url="the_star_url" -a days_played=days_played
 # if you want to store the json file 
 scrapy crawl playerspider -O path_to_file.json
 ```
+
+``` console
+# to build the containe
+docker build -t scrapy-project .
+
+# to run one of the spiders
+docker run scrapy-project scrapy crawl tournamentspider
+``` 
 
 ## Examples
 
