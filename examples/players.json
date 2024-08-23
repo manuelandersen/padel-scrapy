@@ -1,0 +1,476 @@
+[
+    {
+        "ranking": "1",
+        "name": "Arturo Coello",
+        "country": "ESP",
+        "points": "13750",
+        "paired_with": "Agustin Tapia",
+        "position": "Right",
+        "birth_date": "08/03/2002",
+        "height": "1,90",
+        "place_of_birth": "Valladolid",
+        "residence": null,
+        "matches_played": "58",
+        "matches_won": "52",
+        "matches_lost": "6",
+        "consecutive_victories": "18",
+        "effectiveness": "89.66%",
+        "old_position": null,
+        "points_per_tournament": [
+            {
+                "tournament_name": "MALAGA PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "06/07/2024",
+                "round_reached": " Winner",
+                "points": "1000"
+            },
+            {
+                "tournament_name": "GENOVA PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "30/06/2024",
+                "round_reached": "Finals",
+                "points": "300"
+            },
+            {
+                "tournament_name": "Italy",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "23/06/2024",
+                "round_reached": "Finals",
+                "points": "1200"
+            },
+            {
+                "tournament_name": "BANCO DE CHILE SANTIAGO PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "26/05/2024",
+                "round_reached": " Winner",
+                "points": "1000"
+            },
+            {
+                "tournament_name": "MAR DEL PLATA PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "18/05/2024",
+                "round_reached": "Finals",
+                "points": "600"
+            },
+            {
+                "tournament_name": "ASUNCION PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "11/05/2024",
+                "round_reached": " Winner",
+                "points": "500"
+            },
+            {
+                "tournament_name": "SEVILLA PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "28/04/2024",
+                "round_reached": "Semi Finals",
+                "points": "180"
+            },
+            {
+                "tournament_name": "LOTTO BRUSSELS PREMIER PADEL P2 PRESENTED BY BELFIUS",
+                "category": "PREMIER PADEL P2",
+                "date": "20/04/2024",
+                "round_reached": "Finals",
+                "points": "300"
+            },
+            {
+                "tournament_name": "PUERTO CABELLO PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "23/03/2024",
+                "round_reached": " Winner",
+                "points": "500"
+            },
+            {
+                "tournament_name": "GNP ACAPULCO P1 PREMIER PADEL",
+                "category": "PREMIER PADEL P1",
+                "date": "17/03/2024",
+                "round_reached": " Winner",
+                "points": "1000"
+            },
+            {
+                "tournament_name": "OOREDOO QATAR MAJOR PREMIER PADEL",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "01/03/2024",
+                "round_reached": " Winner",
+                "points": "2000"
+            },
+            {
+                "tournament_name": "RIYADH SEASON PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "24/02/2024",
+                "round_reached": "Finals",
+                "points": "600"
+            },
+            {
+                "tournament_name": "Milan",
+                "category": "PREMIER PADEL P1",
+                "date": "10/12/2023",
+                "round_reached": "Semi Finals",
+                "points": "300"
+            },
+            {
+                "tournament_name": "Mexico",
+                "category": "WPT",
+                "date": "20/11/2023",
+                "round_reached": " Winner",
+                "points": "345"
+            },
+            {
+                "tournament_name": "Menorca",
+                "category": "WPT",
+                "date": "23/10/2023",
+                "round_reached": "Finals",
+                "points": "210"
+            },
+            {
+                "tournament_name": "Madrid",
+                "category": "WPT",
+                "date": "18/09/2023",
+                "round_reached": "Finals",
+                "points": "240"
+            },
+            {
+                "tournament_name": "Paris",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "10/09/2023",
+                "round_reached": " Winner",
+                "points": "2000"
+            },
+            {
+                "tournament_name": "Mendoza",
+                "category": "PREMIER PADEL P1",
+                "date": "06/08/2023",
+                "round_reached": " Winner",
+                "points": "1000"
+            },
+            {
+                "tournament_name": "Madrid",
+                "category": "PREMIER PADEL P1",
+                "date": "23/07/2023",
+                "round_reached": " Winner",
+                "points": "1000"
+            },
+            {
+                "tournament_name": "Italy",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "16/07/2023",
+                "round_reached": " Winner",
+                "points": "2000"
+            },
+            {
+                "tournament_name": "OOREDOO QATAR MAJOR PREMIER PADEL",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "26/02/2023",
+                "round_reached": "Semi Finals",
+                "points": "750"
+            },
+            {
+                "tournament_name": "Milan",
+                "category": "PREMIER PADEL P1",
+                "date": "11/12/2022",
+                "round_reached": null,
+                "points": "300"
+            },
+            {
+                "tournament_name": "Major Mexico",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "04/12/2022",
+                "round_reached": null,
+                "points": "2000"
+            },
+            {
+                "tournament_name": "New Giza",
+                "category": "PREMIER PADEL P1",
+                "date": "30/10/2022",
+                "round_reached": null,
+                "points": "300"
+            },
+            {
+                "tournament_name": "Mendoza",
+                "category": "PREMIER PADEL P1",
+                "date": "14/08/2022",
+                "round_reached": null,
+                "points": "600"
+            },
+            {
+                "tournament_name": "P1 Madrid",
+                "category": "PREMIER PADEL P1",
+                "date": "06/08/2022",
+                "round_reached": null,
+                "points": "180"
+            },
+            {
+                "tournament_name": "Paris",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "17/07/2022",
+                "round_reached": null,
+                "points": "360"
+            },
+            {
+                "tournament_name": "Italy",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "29/05/2022",
+                "round_reached": null,
+                "points": "750"
+            },
+            {
+                "tournament_name": "Doha",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "02/04/2022",
+                "round_reached": null,
+                "points": "360"
+            }
+        ]
+    },
+    {
+        "ranking": "36",
+        "name": "Jairo Bautista",
+        "country": "ESP",
+        "points": "1242",
+        "paired_with": "Francisco Guerrero",
+        "position": "Left",
+        "birth_date": "11/07/2001",
+        "height": "1,90",
+        "place_of_birth": "Málaga",
+        "residence": null,
+        "matches_played": "23",
+        "matches_won": "10",
+        "matches_lost": "13",
+        "consecutive_victories": "2",
+        "effectiveness": "43.48%",
+        "old_position": "+1",
+        "points_per_tournament": [
+            {
+                "tournament_name": "FIP STAR GRAN CANARIA",
+                "category": "FIP STAR",
+                "date": "13/08/2024",
+                "round_reached": "Finals",
+                "points": "37"
+            },
+            {
+                "tournament_name": "FINLAND PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "28/07/2024",
+                "round_reached": "R32",
+                "points": "15"
+            },
+            {
+                "tournament_name": "MALAGA PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "06/07/2024",
+                "round_reached": "R32",
+                "points": "45"
+            },
+            {
+                "tournament_name": "GENOVA PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "30/06/2024",
+                "round_reached": "R16",
+                "points": "45"
+            },
+            {
+                "tournament_name": "Italy",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "23/06/2024",
+                "round_reached": "R16",
+                "points": "180"
+            },
+            {
+                "tournament_name": "BETCLIC BORDEAUX PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "09/06/2024",
+                "round_reached": "R16",
+                "points": "45"
+            },
+            {
+                "tournament_name": "BANCO DE CHILE SANTIAGO PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "26/05/2024",
+                "round_reached": "R16",
+                "points": "90"
+            },
+            {
+                "tournament_name": "MAR DEL PLATA PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "18/05/2024",
+                "round_reached": "R32",
+                "points": "45"
+            },
+            {
+                "tournament_name": "ASUNCION PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "11/05/2024",
+                "round_reached": "R32",
+                "points": "15"
+            },
+            {
+                "tournament_name": "SEVILLA PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "28/04/2024",
+                "round_reached": "R32",
+                "points": "15"
+            },
+            {
+                "tournament_name": "LOTTO BRUSSELS PREMIER PADEL P2 PRESENTED BY BELFIUS",
+                "category": "PREMIER PADEL P2",
+                "date": "20/04/2024",
+                "round_reached": "R16",
+                "points": "45"
+            },
+            {
+                "tournament_name": "FIP RISE PALA PADEL NOLA",
+                "category": "FIP RISE",
+                "date": "10/04/2024",
+                "round_reached": "Quarter Finals",
+                "points": "5"
+            },
+            {
+                "tournament_name": "PUERTO CABELLO PREMIER PADEL P2",
+                "category": "PREMIER PADEL P2",
+                "date": "23/03/2024",
+                "round_reached": "R16",
+                "points": "45"
+            },
+            {
+                "tournament_name": "GNP ACAPULCO P1 PREMIER PADEL",
+                "category": "PREMIER PADEL P1",
+                "date": "17/03/2024",
+                "round_reached": "R32",
+                "points": "45"
+            },
+            {
+                "tournament_name": "OOREDOO QATAR MAJOR PREMIER PADEL",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "01/03/2024",
+                "round_reached": "R32",
+                "points": "90"
+            },
+            {
+                "tournament_name": "RIYADH SEASON PREMIER PADEL P1",
+                "category": "PREMIER PADEL P1",
+                "date": "24/02/2024",
+                "round_reached": "R32",
+                "points": "45"
+            },
+            {
+                "tournament_name": "Milan",
+                "category": "PREMIER PADEL P1",
+                "date": "10/12/2023",
+                "round_reached": "R16",
+                "points": "90"
+            },
+            {
+                "tournament_name": "WPT MALMO OPEN 1000",
+                "category": "WPT",
+                "date": "06/11/2023",
+                "round_reached": "R16",
+                "points": "30"
+            },
+            {
+                "tournament_name": "WPT AMSTERDAM OPEN 1000",
+                "category": "WPT",
+                "date": "09/10/2023",
+                "round_reached": "R16",
+                "points": "30"
+            },
+            {
+                "tournament_name": "Sardegna",
+                "category": "FIP PLATINUM",
+                "date": "08/10/2023",
+                "round_reached": "R32",
+                "points": "8"
+            },
+            {
+                "tournament_name": "Madrid",
+                "category": "WPT",
+                "date": "18/09/2023",
+                "round_reached": "R16",
+                "points": "35"
+            },
+            {
+                "tournament_name": "Paris",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "10/09/2023",
+                "round_reached": "R16",
+                "points": "180"
+            },
+            {
+                "tournament_name": "FIP RISE CIUDAD DE CORDOBA",
+                "category": "FIP RISE",
+                "date": "19/08/2023",
+                "round_reached": "Finals",
+                "points": "15"
+            },
+            {
+                "tournament_name": "FIP STAR GRAN CANARIA",
+                "category": "FIP STAR",
+                "date": "15/08/2023",
+                "round_reached": " Winner",
+                "points": "50"
+            },
+            {
+                "tournament_name": "Mendoza",
+                "category": "PREMIER PADEL P1",
+                "date": "06/08/2023",
+                "round_reached": "R32",
+                "points": "45"
+            },
+            {
+                "tournament_name": "Madrid",
+                "category": "PREMIER PADEL P1",
+                "date": "23/07/2023",
+                "round_reached": "R32",
+                "points": "62"
+            },
+            {
+                "tournament_name": "Italy",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "16/07/2023",
+                "round_reached": "R32",
+                "points": "90"
+            },
+            {
+                "tournament_name": "FIP RISE GOTHENBURG I",
+                "category": "FIP RISE",
+                "date": "31/05/2023",
+                "round_reached": " Winner",
+                "points": "25"
+            },
+            {
+                "tournament_name": "OOREDOO QATAR MAJOR PREMIER PADEL",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "26/02/2023",
+                "round_reached": "R16",
+                "points": "180"
+            },
+            {
+                "tournament_name": "Milan",
+                "category": "PREMIER PADEL P1",
+                "date": "11/12/2022",
+                "round_reached": null,
+                "points": "45"
+            },
+            {
+                "tournament_name": "New Giza",
+                "category": "PREMIER PADEL P1",
+                "date": "30/10/2022",
+                "round_reached": null,
+                "points": "197"
+            },
+            {
+                "tournament_name": "P1 Madrid",
+                "category": "PREMIER PADEL P1",
+                "date": "06/08/2022",
+                "round_reached": null,
+                "points": "35"
+            },
+            {
+                "tournament_name": "Paris",
+                "category": "PREMIER PADEL MAJOR",
+                "date": "17/07/2022",
+                "round_reached": null,
+                "points": "90"
+            }
+        ]
+    }
+]
