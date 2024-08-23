@@ -25,5 +25,11 @@ ipython_config.py
 # json files
 *.json
 
+# Except JSON files in the examples/ folder
+!examples/*.json
+
 # pytest files
 .pytest_cache/
+
+# data folder
+data/
