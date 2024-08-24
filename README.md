@@ -44,7 +44,7 @@ scrapy crawl gamespider -a start_url="the_star_url" -a days_played=days_played
 scrapy crawl playerspider -O path_to_file.json
 ```
 
-If you dont wanna create a virtual environment you can use Docker:
+If you prefer not to create a virtual environment, you can use Docker instead.
 
 ``` console
 # to build the containe
