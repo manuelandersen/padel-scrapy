@@ -11,7 +11,7 @@ class TournamentSpider(scrapy.Spider):
 
 
     def parse(self, response):
-        years = [2023, 2024]
+        years = [2023, 2024, 2025]
         for year in years:
             
             meta = {"year": year}
