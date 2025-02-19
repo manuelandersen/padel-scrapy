@@ -1,48 +1,99 @@
 import scrapy
 import re
+from typing import Optional, List, Dict, Any, Iterator, Union
 
 class GamesSpider(scrapy.Spider):
-    name = "gamespider"
+    """
+    A Scrapy spider to scrape game data from the URL of the tournament games
+
+    Attributes:
+        start_url (str): The initial URL to start scraping from.
+        days_played (int): The number of days to scrape game data for.
+        start_urls (List[str]): A list of URLs to start scraping from (initialized with `start_url`).
+    """
+
+    name: str = "gamespider-refactor"
     
-    def __init__(self, start_url=None, days_played=None, *args, **kwargs):
+    def __init__(self, start_url: Optional[str] = None, days_played: Optional[int] = None, *args: Any, **kwargs: Any) -> None:
+        """
+        Initializes the GamesSpider.
+
+        Args:
+            start_url (Optional[str]): The URL to start scraping from. Must be provided.
+            days_played (Optional[int]): The number of days to scrape game data for. Must be provided.
+            *args: Additional positional arguments passed to the parent class.
+            **kwargs: Additional keyword arguments passed to the parent class.
+
+        Raises:
+            ValueError: If `start_url` or `days_played` is not provided.
+        """
         super(GamesSpider, self).__init__(*args, **kwargs)
         if not start_url:
             raise ValueError("A start_url must be provided to run this spider.")
         if days_played is None:
             raise ValueError("days_played must be provided to run this spider.")
-        self.start_url = start_url 
-        self.days_played = int(days_played)  
-        self.start_urls = [start_url] 
+        self.start_url: str = start_url 
+        self.days_played: int = int(days_played)  
+        self.start_urls: List[str] = [start_url] 
 
-    def parse(self, response):
+    def parse(self, response: scrapy.http.Response) -> Iterator[scrapy.Request]:
+        """
+        Parses the initial response and generates requests for each day's games.
 
-        url = self.start_url
-        days_played = self.days_played
+        Args:
+            response (scrapy.http.Response): The response object from the initial request.
+
+        Yields:
+            scrapy.Request: A request to follow a URL for a specific day's games.
+        """
+        url: str = self.start_url
+        days_played: int = self.days_played
 
         # Use regex to find and replace the number between '/' and '?'
-        pattern = r"(?<=\/)\d+(?=\?)"
+        pattern: str = r"(?<=\/)\d+(?=\?)"
+        number_range: range = range(1, days_played + 1)
+        dates: List[str] = response.xpath('//span[@class="play-day-date"]/text()').getall()
+        urls: List[str] = [re.sub(pattern, str(num), url) for num in number_range]
 
-        number_range = range(1, days_played+1)
+        for url, date in zip(urls, dates):
+            yield response.follow(url, self.parse_games, cb_kwargs={'date': date})
 
-        urls = [re.sub(pattern, str(num), url) for num in number_range]
+    def parse_games(self, response: scrapy.http.Response, date: str) -> Iterator[Dict[str, Union[str, None]]]:
+        """
+        Parses the response for a specific day's games and extracts game data.
 
-        for url in urls:
-            yield response.follow(url, self.parse_games)
+        Args:
+            response (scrapy.http.Response): The response object for a specific day's games.
+            date (str): The date associated with the games being parsed.
 
-    def parse_games(self, response):
-        date = response.xpath("//div[@class='small']/text()").get().strip()
-        games = response.xpath('//div[@class="row"]/div[contains(@class, "col-lg-4")]')
+        Yields:
+            Dict[str, Union[str, None]]: A dictionary containing game data for each game.
+        """
+
+        games: scrapy.SelectorList = response.xpath('//div[@class="row"]/div[contains(@class, "col-lg-4")]')
+    
         for game in games:
             yield from self.parse_game(response, game, date)
 
-    def parse_game(self, response, game, date):
-        # court = game.xpath('.//span[@class="court-name"]/text()').get()
-        # gender = game.xpath(".//div[@class='round-name text-right']/small/b/text()").get().strip()
-        # round = game.xpath(".//div[@class='round-name text-right']/small/text()").get().strip()
+    def parse_game(self, 
+                   response,
+                   game: scrapy.Selector, 
+                   date: str) -> Dict[str, Union[str, None]]:
+        """
+        Parses an individual game and extracts its data.
 
-        court = game.xpath('.//span[@class="court-name"]/text()').get() or ''
-        gender = (game.xpath(".//div[@class='round-name text-right']/small/b/text()").get() or '').strip()
-        round = (game.xpath(".//div[@class='round-name text-right']/small/text()").get() or '').strip()
+        Args:
+            game (scrapy.Selector): The selector object representing an individual game.
+            date (str): The date associated with the game.
+            court_name (Optional[str]): The name of the court where the game is played.
+
+        Returns:
+            Dict[str, Union[str, None]]: A dictionary containing the extracted game data.
+        """
+        court_name = game.xpath('.//span[@class="court-name"]/text()').get() or ''
+        match_time: Optional[str] = game.xpath('.//span[@class="mr-4"]/text()').get()
+        gender = (game.xpath(".//div[@class='round-name text-right']/small/b/text()").get() or '').strip()  
+        round = game.xpath('//div[@class="round-name text-right"]/small/div/text()').get() 
 
         button = game.css('a.open')
         data_id = button.xpath('@data-id').get()
@@ -50,12 +101,10 @@ class GamesSpider(scrapy.Spider):
         data_tid = button.xpath('@data-tid').get()
         data_org = button.xpath('@data-org').get()
 
-        # Extract winner player names
         winner_div = game.xpath('.//div[@class="ml-2 winner line-thin"]')
         winner_player_name_parts = winner_div.xpath('.//span/text()').getall()
         winner_player_name = ' '.join(part.strip() for part in winner_player_name_parts if part.strip())
 
-        # Extract loser player names
         loser_div = game.xpath('.//div[@class="ml-2  line-thin"]')
         loser_player_name_parts = loser_div.xpath('.//span/text()').getall()
         loser_player_name = ' '.join(part.strip() for part in loser_player_name_parts if part.strip())
@@ -76,7 +125,7 @@ class GamesSpider(scrapy.Spider):
                     callback=self.parse_stats,
                     meta={
                     'date': date,
-                    'court': court,
+                    'court': court_name,
                     'gender': gender,
                     'round': round,
                     'winner_player_name': winner_player_name,
@@ -84,221 +133,91 @@ class GamesSpider(scrapy.Spider):
                 }
             )
 
-    def parse_stats(self, response):
+    def parse_stats(self, response: scrapy.http.Response) -> Iterator[Dict[str, Union[str, List[str], Dict[str, Any]]]]:
+        """
+        Parses the statistics for a specific game.
 
-        stats_attributes = {}
+        Args:
+            response (scrapy.http.Response): The response object containing the game statistics.
 
-        tournament = response.xpath("//div[@class='text-center pt-2']/h1[@class='title1 mb-0 font-weight-bold']/text()").get()
-        scores = response.xpath("//div[@class='h3 text-center match-score']/text()").getall()
-        cleaned_scores = [score.strip() for score in scores]
+        Yields:
+            Dict[str, Union[str, List[str], Dict[str, Any]]]: A dictionary containing the parsed game statistics.
+        """
 
-        players = response.xpath('//div[@class="row"]//h6[contains(@class, "player-names-stats")]/text()').getall()
-        left_players = players[:2]
-        right_players = players[2:]
+        player_names = response.xpath('//span[@class="stats-team"]/text()').getall()
+        player_names = [name.strip() for name in player_names]
+        match_score = response.xpath('//div[@class="stats-score"]/text()').get()
+        match_time = response.xpath('//div[@class="stats-matchtime"]/text()').get()
+        player_flags = response.xpath('//img[contains(@src, "/images/flags/")]/@src').getall()
+        player_flags = [flag.split('/')[-1].replace('.jpg', '') for flag in player_flags]
+        set_tabs = response.xpath('//ul[contains(@class, "nav-tabs")]/li[contains(@class, "nav-item")]')
+        num_sets = len(set_tabs) - 1  # Subtract 1 to exclude the "Match" tab
 
-        percentages = response.css('p.text2.withPercentage .percentage::text').getall()
-        pctgs_numbers = response.css('p.text2.withPercentage .text3::text').getall()  
-        numbers_left = response.xpath('//div[@class="col-md-4 col-3"][1]//p[@class="text2"]/text()').getall()
-        numbers_right = response.xpath('//div[@class="col-md-4 col-3 text-right"][1]//p[@class="text2"]/text()').getall()
-        time = response.xpath('//h5[@class="text-center text-uppercase m-3"]/span[2]/text()').get()
 
-        total_stats = len(percentages) // 2 
+        def parse_sets_stats(data: List[str]) -> Dict[str, Dict[str, List[str]]]:
+            """
+            Parses the statistics data into a structured format.
 
-        list_of_pctg_stats = ["total_points_won", 
-                         "break_points_converted", 
-                         "first_serve_point_won",
-                         "second_serve_point_won",
-                         "first_return_points_won",
-                         "second_return_points",
-                         "total_serve_points_won",
-                         "total_return_points_won"]
-        
-        list_of_number_stats = [ 
-                                "longest_points_won_streak",
-                                "average_point_duration_in_seconds",
-                                "aces",
-                                "double_faults",
-                                "services_games_played",
-                                "return_games_played"]  
+            Args:
+                data (List[str]): A list of raw statistics data.
 
-        if total_stats < 16:
-            raise Exception
-        
-        elif total_stats == 16: # just match stats and 1st set stats
-            pctg_stat_counter = 0
+            Returns:
+                Dict[str, Dict[str, List[str]]]: A structured dictionary of statistics.
+            """
+            
+            result = {}
+            current_section = None  # To track the current section (e.g., "Serve", "Return", etc.)
+            i = 0  
 
-            for i, stat in enumerate(2*list_of_pctg_stats): # 2 sets of stats
-                if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
-                    winner_stat = percentages[i*2]
-                    winner_n_stat = pctgs_numbers[i*2]
+            while i < len(data):
+                if isinstance(data[i], str) and not data[i].endswith('%') and not data[i].isdigit():
+                    current_section = data[i]
+                    result[current_section] = {}  
+                    i += 1  
+                else:
+                    # Process the three-pair chunk within the current section
+                    if i + 2 < len(data):  # Ensure there are enough items left for a chunk
+                        value1 = data[i]
+                        key = data[i + 1]
+                        value2 = data[i + 2]
 
-                    looser_stat = percentages[i*2+1]
-                    looser_n_stat = pctgs_numbers[i*2+1]
+                        if current_section: 
+                            result[current_section][key] = [value1, value2]
 
-                    if pctg_stat_counter == 0:
+                        i += 3
+                    else:
+                        # If there aren't enough items left, break
+                        break
 
-                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
+            return result
 
-                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
+        match_stats_list = response.xpath('//div[@id="period-0"]//text()').getall()
+        match_stats_list = [stat.strip() for stat in match_stats_list if stat.strip()]
+        match_stats_list = parse_sets_stats(match_stats_list)
+    
+        set_stats = {}
+        for i in range(1, 4):  
+            if i <= num_sets:
+                set_stats_list = response.xpath(f'//div[@id="period-{i}"]//text()').getall()
+                set_stats_list = [stat.strip() for stat in set_stats_list if stat.strip()]
+                set_stats[f"Set {i}"] = parse_sets_stats(set_stats_list)
 
-                    elif pctg_stat_counter == 1:
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                if stat == 'total_return_points_won': # for switching to the next set of stats
-                    pctg_stat_counter += 1
-
-            number_stat_counter = 0
-
-            for i, stat in enumerate(2*list_of_number_stats):
-                if i < len(numbers_left): 
-                    left_number_stat = numbers_left[i]
-                    right_number_stat = numbers_right[i]
-
-                    if number_stat_counter == 0:
-                        stats_attributes[f'left_match_{stat}'] = left_number_stat
-                        stats_attributes[f'right_match_{stat}'] = right_number_stat
-
-                    if number_stat_counter == 1:
-                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
-                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
-
-                    if stat == 'return_games_played':
-                        number_stat_counter += 1
-
-        elif total_stats == 24: # match stats, 1st set stats and 2nd stats
-
-            pctg_stat_counter = 0
-
-            for i, stat in enumerate(3*list_of_pctg_stats): # 3 sets of stats
-                if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
-                    winner_stat = percentages[i*2]
-                    winner_n_stat = pctgs_numbers[i*2]
-
-                    looser_stat = percentages[i*2+1]
-                    looser_n_stat = pctgs_numbers[i*2+1]
-
-                    if pctg_stat_counter == 0:
-
-                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
-
-                    elif pctg_stat_counter == 1:
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                    elif pctg_stat_counter == 2:
-                        stats_attributes[f'left_2_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_2_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_2_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_2_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                if stat == 'total_return_points_won': # for switching to the next set of stats
-                    pctg_stat_counter += 1
-
-            number_stat_counter = 0
-
-            for i, stat in enumerate(3*list_of_number_stats):
-                if i < len(numbers_left): 
-                    left_number_stat = numbers_left[i]
-                    right_number_stat = numbers_right[i]
-
-                    if number_stat_counter == 0:
-                        stats_attributes[f'left_match_{stat}'] = left_number_stat
-                        stats_attributes[f'right_match_{stat}'] = right_number_stat
-
-                    if number_stat_counter in [1,2]:
-                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
-                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
-
-                    if stat == 'return_games_played':
-                        number_stat_counter += 1
-        
-        elif total_stats == 32: # match stats, 1st set stats, 2nd set stats and 3rd set stats
-
-            pctg_stat_counter = 0
-
-            for i, stat in enumerate(4*list_of_pctg_stats): # 4 sets of stats
-                if i*2+1 < len(percentages):  # Make sure we don't go out of bounds
-                    winner_stat = percentages[i*2]
-                    winner_n_stat = pctgs_numbers[i*2]
-
-                    looser_stat = percentages[i*2+1]
-                    looser_n_stat = pctgs_numbers[i*2+1]
-
-                    if pctg_stat_counter == 0:
-
-                        stats_attributes[f'left_match_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_match_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_match_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_match_pctg_numbers_{stat}'] = looser_n_stat
-
-                    elif pctg_stat_counter == 1:
-                        stats_attributes[f'left_1_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_1_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_1_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_1_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                    elif pctg_stat_counter == 2:
-                        stats_attributes[f'left_2_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_2_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_2_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_2_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                    elif pctg_stat_counter == 3:
-                        stats_attributes[f'left_3_set_pctg_{stat}'] = winner_stat
-                        stats_attributes[f'left_3_set_pctg_numbers_{stat}'] = winner_n_stat
-
-                        stats_attributes[f'right_3_set_pctg_{stat}'] = looser_stat
-                        stats_attributes[f'right_3_set_pctg_numbers_{stat}'] = looser_n_stat
-
-                if stat == 'total_return_points_won': # for switching to the next set of stats
-                    pctg_stat_counter += 1
-
-            number_stat_counter = 0
-
-            for i, stat in enumerate(4*list_of_number_stats):
-                if i < len(numbers_left): 
-                    left_number_stat = numbers_left[i]
-                    right_number_stat = numbers_right[i]
-
-                    if number_stat_counter == 0:
-                        stats_attributes[f'left_match_{stat}'] = left_number_stat
-                        stats_attributes[f'right_match_{stat}'] = right_number_stat
-
-                    if number_stat_counter in [1,2,3]:
-                        stats_attributes[f'left_{number_stat_counter}_set_{stat}'] = left_number_stat
-                        stats_attributes[f'right_{number_stat_counter}_set_{stat}'] = right_number_stat
-
-                    if stat == 'return_games_played':
-                        number_stat_counter += 1
+            else:
+                # If the set doesn't exist, add an empty list
+                set_stats[f"Set {i}"] = {}
 
         yield {
-            'tournament': tournament,
             'date': response.meta['date'],
             'court': response.meta['court'],
             'gender': response.meta['gender'],
             'round': response.meta['round'],
-            'time': time,
             'winner_player_name': response.meta['winner_player_name'],
             'loser_player_name': response.meta['loser_player_name'],
-            'left_players': left_players,
-            'right_players': right_players,
-            'scores': cleaned_scores,
-            **stats_attributes
+            'player_names': player_names,
+            'match_score': match_score,
+            'match_time': match_time,
+            'player_flags': player_flags,
+            'num_sets': num_sets,
+            'match_stats': match_stats_list,  
+            'set_stats': set_stats
         }
