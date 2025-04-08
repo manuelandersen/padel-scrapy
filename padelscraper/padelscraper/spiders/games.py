@@ -12,9 +12,13 @@ class GamesSpider(scrapy.Spider):
         start_urls (List[str]): A list of URLs to start scraping from (initialized with `start_url`).
     """
 
-    name: str = "gamespider-refactor"
+    name: str = "gamespider"
     
-    def __init__(self, start_url: Optional[str] = None, days_played: Optional[int] = None, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, 
+                 start_url: Optional[str] = None, 
+                 days_played: Optional[int] = None, 
+                 *args: Any, 
+                 **kwargs: Any) -> None:
         """
         Initializes the GamesSpider.
 
@@ -58,7 +62,9 @@ class GamesSpider(scrapy.Spider):
         for url, date in zip(urls, dates):
             yield response.follow(url, self.parse_games, cb_kwargs={'date': date})
 
-    def parse_games(self, response: scrapy.http.Response, date: str) -> Iterator[Dict[str, Union[str, None]]]:
+    def parse_games(self, 
+                    response: scrapy.http.Response, 
+                    date: str) -> Iterator[Dict[str, Union[str, None]]]:
         """
         Parses the response for a specific day's games and extracts game data.
 
